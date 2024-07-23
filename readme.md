@@ -35,3 +35,7 @@ Starting the Server, Frontend, and Installing Dependencies
 
 You can start the frontend on ``` http://localhost:5173/```
 
+## Collab Link
+
+Collab Link ```https://colab.research.google.com/drive/1AJOg-jnoWxcr2-jBgjYjtsXwyJUl31pa?usp=sharing```
+
