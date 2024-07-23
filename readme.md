@@ -27,10 +27,9 @@ Starting the Server, Frontend, and Installing Dependencies
 ```
 
 
-## Screenshots
+## Working
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
+![image](https://github.com/user-attachments/assets/1d8edb25-3bf7-4a63-8150-6165e12eabb1)
 
 ## Demo
 
