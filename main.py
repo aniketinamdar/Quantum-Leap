@@ -2,8 +2,9 @@ import subprocess
 import os
 import time
 import threading
-import requests
 import sys
+import http.client
+from urllib.parse import urlparse
 
 curr = os.getcwd()
 
@@ -13,15 +14,6 @@ backend_script = 'main.py'
 
 npm_path = 'C:\\Program Files\\nodejs\\npm.cmd'
 python_path = sys.executable
-
-def create_virtualenv(venv_path):
-    print("Creating virtual environment...")
-    subprocess.run([python_path, '-m', 'venv', venv_path], cwd=curr)
-
-def install_requirements(venv_path):
-    print("Installing general requirements...")
-    pip_executable = os.path.join(venv_path, 'Scripts', 'pip')
-    subprocess.run([pip_executable, 'install', '-r', 'requirements.txt'], cwd=curr)
 
 def create_backend_virtualenv(venv_path):
     print("Creating backend virtual environment...")
@@ -56,16 +48,19 @@ def wait_for_process(proc, name):
         proc.wait()
 
 def is_backend_ready(url='http://localhost:5000'):
+    parsed_url = urlparse(url)
+    connection = http.client.HTTPConnection(parsed_url.hostname, parsed_url.port)
+    
     try:
-        response = requests.get(url)
-        return response.status_code == 200
-    except requests.ConnectionError:
+        connection.request('GET', parsed_url.path)
+        response = connection.getresponse()
+        return response.status == 200
+    except (http.client.HTTPException, ConnectionRefusedError):
         return False
+    finally:
+        connection.close()
 
 if __name__ == "__main__":
-    root_venv_path = os.path.join(curr, 'venv')
-    create_virtualenv(root_venv_path)
-    install_requirements(root_venv_path)
     
     backend_venv_path = os.path.join(backend_dir, 'venv')
     create_backend_virtualenv(backend_venv_path)
