@@ -12,16 +12,25 @@ backend_dir = os.path.join(curr, 'qlbackend')
 backend_script = 'main.py'
 
 npm_path = 'C:\\Program Files\\nodejs\\npm.cmd'
-python_path = sys.executable  
+python_path = sys.executable
 
 def create_virtualenv(venv_path):
     print("Creating virtual environment...")
+    subprocess.run([python_path, '-m', 'venv', venv_path], cwd=curr)
+
+def install_requirements(venv_path):
+    print("Installing general requirements...")
+    pip_executable = os.path.join(venv_path, 'Scripts', 'pip')
+    subprocess.run([pip_executable, 'install', '-r', 'requirements.txt'], cwd=curr)
+
+def create_backend_virtualenv(venv_path):
+    print("Creating backend virtual environment...")
     subprocess.run([python_path, '-m', 'venv', venv_path], cwd=backend_dir)
 
 def install_backend_requirements(venv_path):
     print("Installing backend requirements...")
     pip_executable = os.path.join(venv_path, 'Scripts', 'pip')
-    subprocess.run([pip_executable, 'install', '-r', os.path.join(backend_dir,'requirements.txt')], cwd=backend_dir)
+    subprocess.run([pip_executable, 'install', '-r', os.path.join(backend_dir, 'requirements.txt')], cwd=backend_dir)
 
 def install_frontend_dependencies():
     print("Installing frontend dependencies...")
@@ -54,18 +63,21 @@ def is_backend_ready(url='http://localhost:5000'):
         return False
 
 if __name__ == "__main__":
-    venv_path = os.path.join(backend_dir, 'venv')
+    root_venv_path = os.path.join(curr, 'venv')
+    create_virtualenv(root_venv_path)
+    install_requirements(root_venv_path)
     
-    create_virtualenv(venv_path)
-    install_backend_requirements(venv_path)
+    backend_venv_path = os.path.join(backend_dir, 'venv')
+    create_backend_virtualenv(backend_venv_path)
+    install_backend_requirements(backend_venv_path)
     install_frontend_dependencies()
     
-    backend_process = start_backend(venv_path)
+    backend_process = start_backend(backend_venv_path)
     
     backend_ready = False
     while not backend_ready:
         print("Model is too big to load, please wait for a while...")
-        time.sleep(120)
+        time.sleep(30)
         backend_ready = is_backend_ready()
     
     frontend_process = start_frontend()
